@@ -15,6 +15,13 @@ export const createProductSchema = z.object({
         invalid_type_error: 'Price must be a number'
       })
       .min(0, { message: 'Price must be greater than 0' }),
+    category: z.enum(["electronics", "clothing", "home", "beauty", "sports"], {
+      errorMap: () => ({ message: "Invalid category" })
+    }),
+    brand: z.string()
+      .min(2, { message: 'Brand must be at least 2 characters' })
+      .max(25, { message: 'Brand must be less than 25 characters' })
+      .regex(/^[a-zA-Z0-9\s]+$/, { message: 'Brand must contain letters and numbers only' }),
     inStock: z.boolean().default(true)
   })
 });
@@ -27,6 +34,11 @@ export const updateProductSchema = z.object({
     name: z.string().min(3).max(20).optional(),
     description: z.string().max(200).trim().optional(),
     price: z.number().min(0).optional(),
+    category: z.enum(["electronics", "clothing", "home", "beauty", "sports"]).optional(),
+    brand: z.string()
+      .min(2).max(25)
+      .regex(/^[a-zA-Z0-9\s]+$/)
+      .optional(),
     inStock: z.boolean().optional()
   })
 });

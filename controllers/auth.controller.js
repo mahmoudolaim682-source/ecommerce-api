@@ -8,7 +8,7 @@ const signToken = (id) => {
     });
 };
 
-export const signup = asyncHandler(async (req, res, next) => {
+export const signup = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
@@ -16,13 +16,7 @@ export const signup = asyncHandler(async (req, res, next) => {
         return res.status(400).json({ success: false, message: "Email is already used" });
     }
 
-    const newUser = await User.create({
-        name,
-        email,
-        password,
-        role: "user",
-    });
-
+    const newUser = await User.create({ name, email, password, role: "user" });
     const token = signToken(newUser._id);
 
     res.status(201).json({
@@ -32,7 +26,7 @@ export const signup = asyncHandler(async (req, res, next) => {
     });
 });
 
-export const login = asyncHandler(async (req, res, next) => {
+export const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -40,15 +34,11 @@ export const login = asyncHandler(async (req, res, next) => {
     }
 
     const user = await User.findOne({ email }).select("+password");
-    
     if (!user || !(await user.comparePassword(password))) {
         return res.status(401).json({ success: false, message: "Email or password is not correct" });
     }
 
     const token = signToken(user._id);
 
-    res.status(200).json({
-        success: true,
-        token
-    });
+    res.status(200).json({ success: true, token });
 });
