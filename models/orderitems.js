@@ -12,6 +12,14 @@ const orderItemSchema = new mongoose.Schema({
   }
 });
 
+orderItemSchema.virtual('id').get(function () {
+    return this._id.toHexString();
+});
+
+orderItemSchema.set('toJSON', {
+    virtuals: true,
+});
+
 const OrderItem = mongoose.model("OrderItem", orderItemSchema);
 
 export default OrderItem;
